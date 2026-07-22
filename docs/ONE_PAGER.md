@@ -17,12 +17,14 @@ ZeroClaw's WIT `tool-plugin` world.
 | `sns_resolve` | T0 | Resolve a `.sol` name to its current on-chain owner | Read-only Solana RPC |
 | `token_risk_check` | T0 | Assess mint/freeze authority, token program, and holder concentration | Read-only Solana RPC |
 | `solana_pay_request` | T1 | Build a validated Solana Pay URL for SOL or SPL tokens | No network, signer, or key |
+| `unsigned_transfer` | T1 | Assemble an unsigned SOL/SPL transfer for a human or Squads to sign | Read-only RPC; never signs |
 
 Together they form a safe payment path: `sns_resolve` turns a human-readable
 recipient into a wallet address; `token_risk_check` vets an SPL mint before it is
-used; `solana_pay_request` produces the request that a human or Squads reviews
-and signs. The agent can research, validate, and propose, but cannot transfer
-funds by itself.
+used; `solana_pay_request` produces a Solana Pay request a human scans and signs;
+and `unsigned_transfer` assembles a real, ready-to-sign transaction whose signature
+still stays with the owner. The agent can research, validate, and propose — build
+the transaction itself, even — but cannot move funds by itself.
 
 ## Deny by default
 
@@ -61,8 +63,9 @@ and `plugin-info` interfaces; networked components use host-provided `wasi:http`
 
 ## Roadmap
 
-Next, `unsigned-transfer` (T1) would assemble—but never sign—a SOL/SPL transfer
-for human or Squads approval. `lending-health` (T0) would monitor collateral and
-liquidation distance using read-only protocol data. Both preserve the same rule:
-the agent may understand and propose financial actions, but authority stays with
-the owner.
+Next, `lending-health` (T0) would monitor collateral and liquidation distance using
+read-only protocol data; `unsigned_transfer` would grow Token-2022 support and a
+Squads-proposal output; and a `simulateTransaction` preview would let the human see
+the expected effect before signing. All preserve the same rule: the agent may
+understand, propose, and even build financial actions, but authority stays with the
+owner.
