@@ -4,7 +4,8 @@
 //! native-testable; only [`call`] (the actual HTTP round-trip) is wasm-gated.
 //! This is the shared substrate every read-tool in the toolbox reuses, with the
 //! transport hardening applied ONCE here: HTTP status-code check before parse,
-//! a connect timeout, and one consistent error convention.
+//! a connect timeout, and one consistent error convention. `waki` 0.5.1 does
+//! not expose an overall/read timeout on its request builder.
 
 use std::collections::HashMap;
 
@@ -46,6 +47,7 @@ pub fn call(url: &str, method: &str, params: Value) -> Result<Value, String> {
     let resp = waki::Client::new()
         .post(url)
         .json(&body(method, params))
+        // `waki` 0.5.1 exposes only a connect timeout, not an overall/read timeout.
         .connect_timeout(Duration::from_secs(8))
         .send()
         .map_err(|e| format!("RPC request failed: {e}"))?;
