@@ -19,13 +19,19 @@ yet money still moves on-chain in a live demo.
 
 ## Plugins
 
-| plugin | tier | what it does | keys? | network? |
-|---|---|---|---|---|
-| **solana-pay-request** | T1 | build a Solana Pay URL/QR for a SOL/SPL payment a human signs | none | none |
-| token-risk-check | T0 | mint/freeze authority + holder concentration → risk signals | none | RPC (read) |
-| sns-resolve | T0 | resolve a `.sol` name to its owner address | none | RPC (read) |
+| plugin | tier | what it does | keys? | network? | status |
+|---|---|---|---|---|---|
+| **solana-pay-request** | T1 | build a Solana Pay URL/QR for a SOL/SPL payment a human signs | none | none | ✓ built + verified |
+| **token-risk-check** | T0 | mint/freeze authority + holder concentration → red/amber/green | none | RPC (read) | ✓ built + verified |
+| **sns-resolve** | T0 | resolve a `.sol` name to its owner address | none | RPC (read) | ✓ built + verified |
 
-*(more in progress)*
+Each: `cargo test` green, builds to `wasm32-wasip2`, `wasm-tools component wit`
+shows exactly the `tool` + `plugin-info` exports. The tools chain — `sns-resolve`
+turns *"pay bonfida.sol"* into an address that `solana-pay-request` invoices and
+`token-risk-check` vets — over a shared, hardened `rpc.rs` core.
+
+**Roadmap (stretch):** `unsigned-transfer` (T1: assemble an unsigned SOL/SPL tx
+for a human/Squads to sign) · `lending-health` (T0: liquidation-distance monitor).
 
 ## Layout
 
