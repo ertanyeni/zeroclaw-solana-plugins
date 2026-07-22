@@ -123,7 +123,7 @@ footer{border-top:1.5px solid var(--ink);padding:16px 26px;display:flex;gap:12px
 </footer>
 <script>
 const thread=document.getElementById('thread'),input=document.getElementById('msg'),btn=document.getElementById('send');
-const KC={info:'#5f6066',tool:'#3d5afe',plugin:'#7c4dff',ok:'#12b886',fail:'#ff5a5f'};
+const KC={info:'#5f6066',tool:'#3d5afe',plugin:'#7c4dff',verify:'#f5a623',ok:'#12b886',fail:'#ff5a5f'};
 let stepN=0;
 function fill(b){input.value=b.textContent;input.focus();}
 function esc(s){return (s||'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));}
@@ -173,20 +173,43 @@ function send(){const text=input.value.trim();if(!text)return;
 </script></body></html>"""
 
 
+# Our Solana toolbox (blue) vs external cross-verification tools (amber).
+OUR_TOOLS = {
+    "token_risk_check": "token risk",
+    "sns_resolve": ".sol çözümü",
+    "solana_pay_request": "pay isteği",
+    "unsigned_transfer": "imzasız tx",
+}
+VERIFY_TOOLS = {
+    "web_search_tool": "web araması",
+    "web_search": "web araması",
+    "web_fetch": "kaynak okunuyor",
+    "http_request": "HTTP isteği",
+    "browser": "sayfa açılıyor",
+    "browse": "sayfa açılıyor",
+}
+
+
 def step_for(rec):
     ev = rec.get("event", {}) or {}
     cat, act = ev.get("category"), ev.get("action")
     msg = rec.get("message", "")
     at = rec.get("attributes", {}) or {}
-    tool = at.get("tool") or at.get("plugin")
+    tool = at.get("tool") or at.get("plugin") or ""
+    verify = tool in VERIFY_TOOLS
+    name = OUR_TOOLS.get(tool) or VERIFY_TOOLS.get(tool) or tool
     if msg == "llm_request":
         return ("modele danışılıyor", "info")
     if cat == "tool" and act == "start":
-        return (f"araç: {tool}", "tool")
+        if verify:
+            return (f"çapraz doğrulama · {name}", "verify")
+        return (f"araç · {name}", "tool")
     if cat == "internal" and at.get("plugin"):
-        return (msg or f"{tool}", "plugin")
+        return (msg or name, "plugin")
     if cat == "tool" and act == "complete":
-        return (f"sonuç: {tool}", "ok")
+        if verify:
+            return (f"doğrulandı · {name}", "ok")
+        return (f"sonuç · {name}", "ok")
     if cat == "tool" and act in ("reject", "fail"):
         return ("__FAIL__" + (msg or "araç reddedildi"), "fail")
     if msg == "llm_response":
