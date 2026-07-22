@@ -24,14 +24,17 @@ yet money still moves on-chain in a live demo.
 | **solana-pay-request** | T1 | build a Solana Pay URL/QR for a SOL/SPL payment a human signs | none | none | ✓ built + verified |
 | **token-risk-check** | T0 | mint/freeze authority + holder concentration → red/amber/green | none | RPC (read) | ✓ built + verified |
 | **sns-resolve** | T0 | resolve a `.sol` name to its owner address | none | RPC (read) | ✓ built + verified |
+| **unsigned-transfer** | T1 | assemble an unsigned SOL/SPL transfer for a human/Squads to sign | none | RPC (read) | ✓ built + verified |
 
 Each: `cargo test` green, builds to `wasm32-wasip2`, `wasm-tools component wit`
 shows exactly the `tool` + `plugin-info` exports. The tools chain — `sns-resolve`
-turns *"pay bonfida.sol"* into an address that `solana-pay-request` invoices and
-`token-risk-check` vets — over a shared, hardened `rpc.rs` core.
+turns *"pay bonfida.sol"* into an address that `solana-pay-request` invoices,
+`token-risk-check` vets, and `unsigned-transfer` turns into a ready-to-sign
+transaction — over a shared, hardened `rpc.rs` core. Every write stops at the
+wallet: no plugin ever signs.
 
-**Roadmap (stretch):** `unsigned-transfer` (T1: assemble an unsigned SOL/SPL tx
-for a human/Squads to sign) · `lending-health` (T0: liquidation-distance monitor).
+**Roadmap (stretch):** `lending-health` (T0: liquidation-distance monitor) ·
+Token-2022 support + a Squads proposal output for `unsigned-transfer`.
 
 ## Layout
 
