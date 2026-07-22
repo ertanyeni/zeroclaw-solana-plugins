@@ -90,6 +90,20 @@ fn non_mint_account_fails_closed_red() {
 }
 
 #[test]
+fn unknown_token_program_fails_closed_red() {
+    let acct = mint_acct(
+        "11111111111111111111111111111111",
+        Value::Null,
+        Value::Null,
+        "1000000",
+    );
+    let r = assess("WrongOwner", &acct, Some(&largest(&["10"])));
+    assert_eq!(r.verdict, Verdict::Red);
+    assert_eq!(r.token_program, "unknown");
+    assert!(r.signals[0].contains("unknown token program owner"));
+}
+
+#[test]
 fn concentration_skipped_without_largest() {
     let acct = mint_acct(SPL_TOKEN, Value::Null, Value::Null, "1000");
     let r = assess("Mint2", &acct, None);

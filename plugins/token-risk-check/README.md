@@ -88,7 +88,7 @@ manifest.toml   # tool; permissions = http_client, config_read
 ## Build and test
 
 ```bash
-cargo test                                          # 8 host tests, offline
+cargo test                                          # 9 host tests, offline
 rustup target add wasm32-wasip2
 cargo build --target wasm32-wasip2 --release
 wasm-tools component wit target/wasm32-wasip2/release/token_risk_check.wasm

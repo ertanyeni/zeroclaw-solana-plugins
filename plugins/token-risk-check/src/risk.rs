@@ -109,7 +109,6 @@ pub fn assess(mint: &str, acct: &Value, largest: Option<&Value>) -> RiskReport {
     let token_program = match owner {
         SPL_TOKEN => "spl-token".to_string(),
         TOKEN_2022 => "token-2022".to_string(),
-        other if !other.is_empty() => other.to_string(),
         _ => return RiskReport::failed_closed(mint, "unknown token program owner"),
     };
 
