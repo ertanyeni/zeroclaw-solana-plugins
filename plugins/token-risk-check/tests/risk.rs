@@ -41,8 +41,12 @@ fn clean_token_is_green() {
 #[test]
 fn centralized_stablecoin_is_amber() {
     // USDC-shaped: both authorities present.
-    let acct = mint_acct(SPL_TOKEN, json!("BJE5MMbqXjVwjAF7oxwPYXnTXDyspzZyt4vwenNw5ruG"),
-        json!("7dGbd2QZcCKcTndnHcTL8q7SMVXAkp688NTQYwrRCrar"), "8016240821544265");
+    let acct = mint_acct(
+        SPL_TOKEN,
+        json!("BJE5MMbqXjVwjAF7oxwPYXnTXDyspzZyt4vwenNw5ruG"),
+        json!("7dGbd2QZcCKcTndnHcTL8q7SMVXAkp688NTQYwrRCrar"),
+        "8016240821544265",
+    );
     let r = assess("EPjF...", &acct, None);
     assert_eq!(r.verdict, Verdict::Amber);
     assert!(r.mint_authority.is_some());

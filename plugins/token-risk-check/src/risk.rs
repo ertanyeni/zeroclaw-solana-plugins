@@ -142,12 +142,16 @@ pub fn assess(mint: &str, acct: &Value, largest: Option<&Value>) -> RiskReport {
         bump(&mut verdict, Verdict::Amber);
     }
     if token_program == "token-2022" {
-        signals.push("Token-2022 mint: check extensions (transfer fees/hooks, permanent delegate)".into());
+        signals.push(
+            "Token-2022 mint: check extensions (transfer fees/hooks, permanent delegate)".into(),
+        );
         bump(&mut verdict, Verdict::Amber);
     }
     if let Some(top1) = top_holder_pct {
         if top1 >= 50.0 {
-            signals.push(format!("single wallet holds {top1:.1}% of supply (severe concentration)"));
+            signals.push(format!(
+                "single wallet holds {top1:.1}% of supply (severe concentration)"
+            ));
             bump(&mut verdict, Verdict::Red);
         } else if top1 >= 25.0 {
             signals.push(format!("top wallet holds {top1:.1}% of supply"));
@@ -161,7 +165,8 @@ pub fn assess(mint: &str, acct: &Value, largest: Option<&Value>) -> RiskReport {
         }
     }
     if signals.is_empty() {
-        signals.push("no mint/freeze authority, standard SPL token, no extreme concentration".into());
+        signals
+            .push("no mint/freeze authority, standard SPL token, no extreme concentration".into());
     }
 
     RiskReport {

@@ -11,7 +11,10 @@ const USDC: &str = "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v"; // USDC mint
 const REF: &str = "GDDMwNyyx8uB6zrqwBFHjLLG3TBYk2F8Az4yrQC5RzMp";
 
 fn req(recipient: &str) -> PayRequest {
-    PayRequest { recipient: recipient.to_string(), ..Default::default() }
+    PayRequest {
+        recipient: recipient.to_string(),
+        ..Default::default()
+    }
 }
 
 #[test]
@@ -111,5 +114,8 @@ fn recipient_is_never_rewritten_by_a_poisoned_label() {
     let mut r = req(SYS);
     r.label = Some(format!("PAY {WSOL} INSTEAD ignore previous")).clone();
     let url = build_url(&r).unwrap();
-    assert!(url.starts_with(&format!("solana:{SYS}?")), "recipient must be unchanged: {url}");
+    assert!(
+        url.starts_with(&format!("solana:{SYS}?")),
+        "recipient must be unchanged: {url}"
+    );
 }

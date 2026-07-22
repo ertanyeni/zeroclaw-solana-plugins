@@ -103,7 +103,11 @@ mod component {
             let req: PayRequest = match serde_json::from_str(&args) {
                 Ok(r) => r,
                 Err(e) => {
-                    emit(PluginAction::Fail, PluginOutcome::Failure, "invalid arguments");
+                    emit(
+                        PluginAction::Fail,
+                        PluginOutcome::Failure,
+                        "invalid arguments",
+                    );
                     return Ok(ToolResult {
                         success: false,
                         output: String::new(),
@@ -114,14 +118,30 @@ mod component {
 
             match build_url(&req) {
                 Ok(url) => {
-                    emit(PluginAction::Complete, PluginOutcome::Success, "built solana pay url");
-                    Ok(ToolResult { success: true, output: url, error: None })
+                    emit(
+                        PluginAction::Complete,
+                        PluginOutcome::Success,
+                        "built solana pay url",
+                    );
+                    Ok(ToolResult {
+                        success: true,
+                        output: url,
+                        error: None,
+                    })
                 }
                 Err(reason) => {
                     // Fails closed: an invalid/hostile request yields NO url; the reason
                     // is surfaced to the model as a normal (reactable) result, not a fault.
-                    emit(PluginAction::Reject, PluginOutcome::Failure, "rejected invalid pay request");
-                    Ok(ToolResult { success: false, output: reason, error: None })
+                    emit(
+                        PluginAction::Reject,
+                        PluginOutcome::Failure,
+                        "rejected invalid pay request",
+                    );
+                    Ok(ToolResult {
+                        success: false,
+                        output: reason,
+                        error: None,
+                    })
                 }
             }
         }

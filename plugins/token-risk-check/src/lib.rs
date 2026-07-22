@@ -10,8 +10,8 @@
 //! host-testable with a plain `cargo test`. Build:
 //!   rustup target add wasm32-wasip2 && cargo build --target wasm32-wasip2 --release
 
-pub mod rpc;
 pub mod risk;
+pub mod rpc;
 
 #[cfg(target_family = "wasm")]
 mod component {
@@ -86,7 +86,12 @@ mod component {
             let parsed: Args = match serde_json::from_str(&args) {
                 Ok(a) => a,
                 Err(e) => {
-                    emit(PluginAction::Fail, PluginOutcome::Failure, "invalid arguments", None);
+                    emit(
+                        PluginAction::Fail,
+                        PluginOutcome::Failure,
+                        "invalid arguments",
+                        None,
+                    );
                     return Ok(ToolResult {
                         success: false,
                         output: String::new(),
@@ -96,7 +101,12 @@ mod component {
             };
             let mint = parsed.mint.trim().to_string();
             if mint.is_empty() {
-                emit(PluginAction::Reject, PluginOutcome::Failure, "empty mint", None);
+                emit(
+                    PluginAction::Reject,
+                    PluginOutcome::Failure,
+                    "empty mint",
+                    None,
+                );
                 return Ok(ToolResult {
                     success: false,
                     output: "`mint` is required".to_string(),
@@ -107,17 +117,39 @@ mod component {
             let url = rpc::rpc_url(&parsed.config);
 
             // getAccountInfo is required; a transport/RPC failure is surfaced (success:false).
-            let acct = match rpc::call(&url, "getAccountInfo", json!([mint, {"encoding": "jsonParsed"}])) {
+            let acct = match rpc::call(
+                &url,
+                "getAccountInfo",
+                json!([mint, {"encoding": "jsonParsed"}]),
+            ) {
                 Ok(v) => match rpc::result(&v) {
                     Ok(r) => r.clone(),
                     Err(e) => {
-                        emit(PluginAction::Fail, PluginOutcome::Failure, "rpc error", None);
-                        return Ok(ToolResult { success: false, output: e, error: None });
+                        emit(
+                            PluginAction::Fail,
+                            PluginOutcome::Failure,
+                            "rpc error",
+                            None,
+                        );
+                        return Ok(ToolResult {
+                            success: false,
+                            output: e,
+                            error: None,
+                        });
                     }
                 },
                 Err(e) => {
-                    emit(PluginAction::Fail, PluginOutcome::Failure, "rpc call failed", None);
-                    return Ok(ToolResult { success: false, output: e, error: None });
+                    emit(
+                        PluginAction::Fail,
+                        PluginOutcome::Failure,
+                        "rpc call failed",
+                        None,
+                    );
+                    return Ok(ToolResult {
+                        success: false,
+                        output: e,
+                        error: None,
+                    });
                 }
             };
 

@@ -91,7 +91,11 @@ mod component {
             let parsed: Args = match serde_json::from_str(&args) {
                 Ok(a) => a,
                 Err(e) => {
-                    emit(PluginAction::Fail, PluginOutcome::Failure, "invalid arguments");
+                    emit(
+                        PluginAction::Fail,
+                        PluginOutcome::Failure,
+                        "invalid arguments",
+                    );
                     return Ok(ToolResult {
                         success: false,
                         output: String::new(),
@@ -110,7 +114,11 @@ mod component {
             };
 
             let url = rpc::rpc_url(&parsed.config);
-            let resp = match rpc::call(&url, "getAccountInfo", json!([account, {"encoding": "base64"}])) {
+            let resp = match rpc::call(
+                &url,
+                "getAccountInfo",
+                json!([account, {"encoding": "base64"}]),
+            ) {
                 Ok(v) => v,
                 Err(e) => return fail_rpc(e),
             };
@@ -136,10 +144,16 @@ mod component {
                 Err(e) => return reject(e),
             };
             if owner == DEFAULT_PUBKEY {
-                return reject(format!("domain \"{label}.sol\" has no owner set (unregistered or expired)"));
+                return reject(format!(
+                    "domain \"{label}.sol\" has no owner set (unregistered or expired)"
+                ));
             }
 
-            emit(PluginAction::Complete, PluginOutcome::Success, "resolved domain");
+            emit(
+                PluginAction::Complete,
+                PluginOutcome::Success,
+                "resolved domain",
+            );
             Ok(ToolResult {
                 success: true,
                 output: json!({
@@ -155,12 +169,20 @@ mod component {
 
     fn reject(msg: String) -> Result<ToolResult, String> {
         emit(PluginAction::Reject, PluginOutcome::Failure, "rejected");
-        Ok(ToolResult { success: false, output: msg, error: None })
+        Ok(ToolResult {
+            success: false,
+            output: msg,
+            error: None,
+        })
     }
 
     fn fail_rpc(msg: String) -> Result<ToolResult, String> {
         emit(PluginAction::Fail, PluginOutcome::Failure, "rpc error");
-        Ok(ToolResult { success: false, output: msg, error: None })
+        Ok(ToolResult {
+            success: false,
+            output: msg,
+            error: None,
+        })
     }
 
     fn emit(action: PluginAction, outcome: PluginOutcome, message: &str) {
